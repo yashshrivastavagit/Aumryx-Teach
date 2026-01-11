@@ -16,6 +16,7 @@ import TeacherBrowsePage from "./pages/TeacherBrowsePage";
 import TeacherProfilePage from "./pages/TeacherProfilePage";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
+import AdminPanel from "./pages/AdminPanel";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredType }) => {
