@@ -164,6 +164,8 @@ async def get_enrollment(
             detail="Invalid enrollment ID"
         )
     
+    
+    db = await get_db()
     enrollment = await db.enrollments.find_one({"_id": ObjectId(enrollment_id)})
     
     if not enrollment:
