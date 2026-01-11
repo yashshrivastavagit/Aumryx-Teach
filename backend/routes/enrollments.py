@@ -23,6 +23,8 @@ async def create_enrollment(
 ):
     """Enroll in a class (students only)."""
     
+    
+    db = await get_db()
     # Validate class ID
     if not ObjectId.is_valid(enrollment_data.class_id):
         raise HTTPException(
