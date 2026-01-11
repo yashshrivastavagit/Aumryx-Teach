@@ -338,7 +338,7 @@ def test_admin_apis():
     try:
         data = response.json()
         success = isinstance(data, list) and len(data) >= 1  # Should have our unverified teacher
-        found_teacher = any(t["id"] == teacher_id for t in data)
+        found_teacher = any((t.get("id") or t.get("_id")) == teacher_id for t in data)
         print_result("Get Pending Teachers", success and found_teacher, f"Found {len(data)} pending teachers")
     except:
         print_result("Get Pending Teachers", False, "Invalid response format")
