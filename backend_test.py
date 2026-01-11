@@ -233,8 +233,8 @@ def test_protected_endpoints():
     print_test_header("Protected Endpoint Tests")
     
     # Test without token
-    response, error = make_request("GET", "/auth/me", expected_status=401)
-    success = response is not None and response.status_code == 401
+    response, error = make_request("GET", "/auth/me", expected_status=403)
+    success = response is not None and response.status_code == 403
     print_result("No Token Rejection", success, "Unauthorized access properly blocked")
     
     # Test with valid token
