@@ -479,8 +479,10 @@ def test_enrollment_system():
         
     try:
         data = response.json()
-        enrollment_id = data["id"]
+        # Handle both id and _id fields
+        enrollment_id = data.get("id") or data.get("_id")
         success = (
+            enrollment_id is not None and
             data["student_id"] == student_id and
             data["class_id"] == class_id and
             data["status"] == "active"
