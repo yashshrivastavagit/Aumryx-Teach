@@ -42,6 +42,8 @@ async def get_classes(
     else:
         query["status"] = ClassStatus.ACTIVE.value  # Default to active classes
     
+    db = await get_db()
+    
     classes = []
     async for class_doc in db.classes.find(query):
         class_doc["_id"] = str(class_doc["_id"])
