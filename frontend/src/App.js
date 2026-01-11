@@ -39,8 +39,8 @@ const ProtectedRoute = ({ children, requiredType }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredType && user?.userType !== requiredType) {
-    return <Navigate to={user?.userType === 'teacher' ? '/teacher/dashboard' : '/student/dashboard'} replace />;
+  if (requiredType && user?.user_type !== requiredType) {
+    return <Navigate to={user?.user_type === 'teacher' ? '/teacher/dashboard' : '/student/dashboard'} replace />;
   }
 
   return children;
