@@ -42,6 +42,9 @@ api_router.include_router(attendance.router)
 api_router.include_router(notes.router)
 api_router.include_router(assignments.router)
 api_router.include_router(community.router)
+api_router.include_router(profile.router)
+api_router.include_router(ratings.router)
+api_router.include_router(analytics.router)
 
 # Include the router in the main app
 app.include_router(api_router)
