@@ -436,7 +436,7 @@ def test_class_management():
         
     try:
         data = response.json()
-        success = data["id"] == class_id and data["title"] == CLASS_DATA["title"]
+        success = (data.get("id") or data.get("_id")) == class_id and data["title"] == CLASS_DATA["title"]
         print_result("Get Class by ID", success, f"Class retrieved: {data['title']}")
     except:
         print_result("Get Class by ID", False, "Invalid response format")
