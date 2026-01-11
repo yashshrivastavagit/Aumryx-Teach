@@ -114,6 +114,8 @@ async def update_class(
             detail="Invalid class ID"
         )
     
+    
+    db = await get_db()
     # Check if class exists and belongs to teacher
     existing_class = await db.classes.find_one({"_id": ObjectId(class_id)})
     if not existing_class:
