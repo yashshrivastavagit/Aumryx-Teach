@@ -1,21 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { mockTeachers } from '../mockData';
+import { teacherService } from '../services/api';
 import { Search, Star, Users, Clock, CheckCircle } from 'lucide-react';
 
 const TeacherBrowsePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('all');
+  const [teachers, setTeachers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Get unique subjects
-  const allSubjects = ['all', ...new Set(mockTeachers.flatMap(t => t.subjects))];
+  // Fetch teachers from API
+  useEffect(() => {
+    fetchTeachers();
+  }, [selectedSubject]);
 
-  // Filter teachers
-  const filteredTeachers = mockTeachers.filter(teacher => {
-    const matchesSearch = teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         teacher.subjects.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesSubject = selectedSubject === 'all' || teacher.subjects.includes(selectedSubject);
-    return matchesSearch && matchesSubject;
+  const fetchTeachers = async () => {
+    try {
+      setLoading(true);
+      const params = {
+        verified_only: true
+      };
+      
+      if (selectedSubject !== 'all') {
+        params.subject = selectedSubject;
+      }
+      
+      if (searchTerm) {
+        params.search = searchTerm;
+      }
+
+      const data = await teacherService.getTeachers(params);
+      setTeachers(data);
+      setError('');
+    } catch (err) {
+      console.error('Error fetching teachers:', err);
+      setError('Failed to load teachers. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle search with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm !== '') {
+        fetchTeachers();
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Get unique subjects from teachers
+  const allSubjects = ['all', ...new Set(teachers.flatMap(t => t.subjects || []))];
+
+  // Filter teachers on frontend for immediate feedback
+  const filteredTeachers = teachers.filter(teacher => {
+    if (searchTerm) {
+      const matchesSearch = teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (teacher.subjects && teacher.subjects.some(s => s.toLowerCase().includes(searchTerm.toLowerCase())));
+      return matchesSearch;
+    }
+    return true;
   });
 
   return (
@@ -63,86 +110,108 @@ const TeacherBrowsePage = () => {
           </div>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-20">
+            <div className="w-16 h-16 border-4 border-t-transparent rounded-full animate-spin mx-auto mb-4" 
+                 style={{ borderColor: 'var(--accent-primary)', borderTopColor: 'transparent' }}></div>
+            <p className="body-medium">Loading teachers...</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-20">
+            <p className="body-large" style={{ color: '#991B1B' }}>{error}</p>
+          </div>
+        )}
+
         {/* Results Count */}
-        <div className="mb-6">
-          <p className="body-medium">
-            Found <span className="font-semibold" style={{ color: 'var(--accent-text)' }}>{filteredTeachers.length}</span> teachers
-          </p>
-        </div>
+        {!loading && !error && (
+          <div className="mb-6">
+            <p className="body-medium">
+              Found <span className="font-semibold" style={{ color: 'var(--accent-text)' }}>{filteredTeachers.length}</span> teachers
+            </p>
+          </div>
+        )}
 
         {/* Teacher Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTeachers.map(teacher => (
-            <Link key={teacher.id} to={`/teacher/${teacher.id}`} className="product-card block">
-              {/* Teacher Image */}
-              <div className="mb-4">
-                <img
-                  src={teacher.imageUrl}
-                  alt={teacher.name}
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-              </div>
-
-              {/* Teacher Info */}
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <h3 className="heading-3 mb-1">{teacher.name}</h3>
-                  {teacher.verified && (
-                    <div className="flex items-center gap-1">
-                      <CheckCircle className="w-4 h-4" style={{ color: 'var(--accent-strong)' }} />
-                      <span className="caption" style={{ color: 'var(--accent-text)' }}>Verified</span>
-                    </div>
-                  )}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredTeachers.map(teacher => (
+              <Link key={teacher._id} to={`/teacher/${teacher._id}`} className="product-card block">
+                {/* Teacher Image */}
+                <div className="mb-4">
+                  <img
+                    src={teacher.image_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop'}
+                    alt={teacher.name}
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
                 </div>
-              </div>
 
-              {/* Subjects */}
-              <div className="flex flex-wrap gap-2 mb-3">
-                {teacher.subjects.map((subject, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 rounded-full body-small"
-                    style={{ background: 'var(--accent-wash)', color: 'var(--accent-text)' }}
-                  >
-                    {subject}
-                  </span>
-                ))}
-              </div>
+                {/* Teacher Info */}
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <h3 className="heading-3 mb-1">{teacher.name}</h3>
+                    {teacher.verified && (
+                      <div className="flex items-center gap-1">
+                        <CheckCircle className="w-4 h-4" style={{ color: 'var(--accent-strong)' }} />
+                        <span className="caption" style={{ color: 'var(--accent-text)' }}>Verified</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-              {/* Stats */}
-              <div className="flex items-center gap-4 mb-3">
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 fill-current" style={{ color: 'var(--accent-strong)' }} />
-                  <span className="body-small font-semibold">{teacher.rating}</span>
+                {/* Subjects */}
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {(teacher.subjects || []).map((subject, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 rounded-full body-small"
+                      style={{ background: 'var(--accent-wash)', color: 'var(--accent-text)' }}
+                    >
+                      {subject}
+                    </span>
+                  ))}
                 </div>
-                <div className="flex items-center gap-1">
-                  <Users className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
-                  <span className="body-small">{teacher.studentsCount} students</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
-                  <span className="body-small">{teacher.experience}</span>
-                </div>
-              </div>
 
-              {/* Bio */}
-              <p className="body-small mb-4" style={{ color: 'var(--text-secondary)' }}>
-                {teacher.bio.length > 100 ? teacher.bio.substring(0, 100) + '...' : teacher.bio}
-              </p>
-
-              {/* Pricing */}
-              <div className="pt-4 border-t" style={{ borderColor: 'var(--border-light)' }}>
-                <div className="flex items-center justify-between">
-                  <span className="body-small" style={{ color: 'var(--text-secondary)' }}>Starting from</span>
-                  <span className="heading-3" style={{ color: 'var(--accent-text)' }}>₹{teacher.hourlyRate}/hr</span>
+                {/* Stats */}
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 fill-current" style={{ color: 'var(--accent-strong)' }} />
+                    <span className="body-small font-semibold">{teacher.rating || 0}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Users className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
+                    <span className="body-small">{teacher.students_count || 0} students</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
+                    <span className="body-small">{teacher.experience || 'N/A'}</span>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+
+                {/* Bio */}
+                {teacher.bio && (
+                  <p className="body-small mb-4" style={{ color: 'var(--text-secondary)' }}>
+                    {teacher.bio.length > 100 ? teacher.bio.substring(0, 100) + '...' : teacher.bio}
+                  </p>
+                )}
+
+                {/* Pricing */}
+                <div className="pt-4 border-t" style={{ borderColor: 'var(--border-light)' }}>
+                  <div className="flex items-center justify-between">
+                    <span className="body-small" style={{ color: 'var(--text-secondary)' }}>Starting from</span>
+                    <span className="heading-3" style={{ color: 'var(--accent-text)' }}>₹{teacher.hourly_rate || 0}/hr</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
 
         {/* No Results */}
-        {filteredTeachers.length === 0 && (
+        {!loading && !error && filteredTeachers.length === 0 && (
           <div className="text-center py-20">
             <p className="body-large" style={{ color: 'var(--text-secondary)' }}>
               No teachers found matching your criteria. Try adjusting your search.
