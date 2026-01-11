@@ -26,11 +26,12 @@ const Header = () => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-2">
           <Link to="/teachers" className="nav-link">Find Teachers</Link>
+          <Link to="/admin" className="nav-link">Admin</Link>
           
           {isAuthenticated ? (
             <>
               <Link 
-                to={user?.userType === 'teacher' ? '/teacher/dashboard' : '/student/dashboard'} 
+                to={user?.user_type === 'teacher' ? '/teacher/dashboard' : '/student/dashboard'} 
                 className="nav-link"
               >
                 Dashboard
