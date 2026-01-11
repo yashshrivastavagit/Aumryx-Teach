@@ -66,6 +66,8 @@ async def create_class(
     class_dict["created_at"] = datetime.utcnow()
     class_dict["updated_at"] = datetime.utcnow()
     
+    db = await get_db()
+    
     # Insert class
     result = await db.classes.insert_one(class_dict)
     class_id = str(result.inserted_id)
