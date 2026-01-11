@@ -25,9 +25,12 @@ BASE_URL = get_backend_url() + "/api"
 print(f"Testing backend at: {BASE_URL}")
 
 # Test data
+import time
+timestamp = int(time.time())
+
 TEACHER_DATA = {
     "name": "Dr. Rajesh Kumar",
-    "email": "rajesh.kumar@example.com",
+    "email": f"rajesh.kumar.{timestamp}@example.com",
     "password": "SecurePass123!",
     "user_type": "teacher",
     "subjects": ["Mathematics", "Physics"],
@@ -40,7 +43,7 @@ TEACHER_DATA = {
 
 STUDENT_DATA = {
     "name": "Priya Sharma",
-    "email": "priya.sharma@example.com", 
+    "email": f"priya.sharma.{timestamp}@example.com", 
     "password": "StudentPass456!",
     "user_type": "student",
     "phone": "+91-9876543210",
