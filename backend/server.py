@@ -37,6 +37,7 @@ api_router.include_router(auth.router)
 api_router.include_router(teachers.router)
 api_router.include_router(classes.router)
 api_router.include_router(enrollments.router)
+api_router.include_router(admin.router)
 
 # Include the router in the main app
 app.include_router(api_router)
