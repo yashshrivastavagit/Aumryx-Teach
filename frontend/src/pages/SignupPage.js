@@ -98,6 +98,7 @@ const SignupPage = () => {
                 userType === 'teacher' ? 'btn-primary' : 'bg-transparent'
               }`}
               style={userType !== 'teacher' ? { color: 'var(--text-secondary)' } : {}}
+              disabled={loading}
             >
               I'm a Teacher
             </button>
@@ -107,6 +108,7 @@ const SignupPage = () => {
                 userType === 'student' ? 'btn-primary' : 'bg-transparent'
               }`}
               style={userType !== 'student' ? { color: 'var(--text-secondary)' } : {}}
+              disabled={loading}
             >
               I'm a Student
             </button>
