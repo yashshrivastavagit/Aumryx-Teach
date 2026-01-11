@@ -167,10 +167,12 @@ def test_student_signup():
     try:
         data = response.json()
         student_token = data["access_token"]
-        student_id = data["user"]["id"]
+        # Handle both id and _id fields
+        student_id = data["user"].get("id") or data["user"].get("_id")
         
         success = (
             student_token is not None and
+            student_id is not None and
             data["user"]["name"] == STUDENT_DATA["name"] and
             data["user"]["email"] == STUDENT_DATA["email"] and
             data["user"]["user_type"] == "student" and
