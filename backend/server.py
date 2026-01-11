@@ -38,6 +38,10 @@ api_router.include_router(teachers.router)
 api_router.include_router(classes.router)
 api_router.include_router(enrollments.router)
 api_router.include_router(admin.router)
+api_router.include_router(attendance.router)
+api_router.include_router(notes.router)
+api_router.include_router(assignments.router)
+api_router.include_router(community.router)
 
 # Include the router in the main app
 app.include_router(api_router)
