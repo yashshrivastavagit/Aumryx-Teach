@@ -10,8 +10,9 @@ from dependencies import get_db, get_current_teacher, get_current_verified_teach
 
 router = APIRouter(prefix="/classes", tags=["Classes"])
 
-# Database connection
-# Database imported from dependencies
+async def get_db():
+    from server import db
+    return db
 
 
 
