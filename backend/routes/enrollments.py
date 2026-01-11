@@ -3,18 +3,17 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from typing import List
 from datetime import datetime
-import os
 
 from models.enrollment import Enrollment, EnrollmentCreate, EnrollmentStatus, PaymentStatus
 from models.user import User
-from dependencies import get_current_student, get_current_user
+from dependencies import get_db, get_current_student, get_current_user
 
 router = APIRouter(prefix="/enrollments", tags=["Enrollments"])
 
 # Database connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# Database imported from dependencies
+
+
 
 @router.post("", response_model=Enrollment, status_code=status.HTTP_201_CREATED)
 async def create_enrollment(

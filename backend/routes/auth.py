@@ -4,7 +4,7 @@ from datetime import datetime
 
 from models.user import UserCreate, UserLogin, User, Token, UserType
 from utils.auth import verify_password, get_password_hash, create_access_token
-from dependencies import get_current_user, get_db
+from dependencies import get_db, get_current_user, get_db
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 

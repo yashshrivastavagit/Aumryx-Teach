@@ -3,17 +3,16 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from typing import List, Optional
 from datetime import datetime
-import os
 
 from models.user import User, UserUpdate
-from dependencies import get_current_user, get_current_teacher
+from dependencies import get_db, get_current_user, get_current_teacher
 
 router = APIRouter(prefix="/teachers", tags=["Teachers"])
 
 # Database connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# Database imported from dependencies
+
+
 
 @router.get("", response_model=List[User])
 async def get_teachers(
