@@ -63,7 +63,7 @@ function AppContent() {
           path="/teacher/dashboard"
           element={
             <ProtectedRoute requiredType="teacher">
-              <TeacherDashboard />
+              <EnhancedTeacherDashboard />
             </ProtectedRoute>
           }
         />
