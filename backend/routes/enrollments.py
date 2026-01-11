@@ -10,8 +10,9 @@ from dependencies import get_db, get_current_student, get_current_user
 
 router = APIRouter(prefix="/enrollments", tags=["Enrollments"])
 
-# Database connection
-# Database imported from dependencies
+async def get_db():
+    from server import db
+    return db
 
 
 
