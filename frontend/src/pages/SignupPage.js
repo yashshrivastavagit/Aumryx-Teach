@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { authService } from '../services/api';
 import { Mail, Lock, User, GraduationCap, BookOpen, AlertCircle } from 'lucide-react';
 
 const SignupPage = () => {
@@ -14,45 +15,62 @@ const SignupPage = () => {
     qualification: ''
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     // Basic validation
     if (!formData.name || !formData.email || !formData.password) {
       setError('Please fill in all required fields');
+      setLoading(false);
       return;
     }
 
     if (userType === 'teacher' && (!formData.subjects || !formData.experience)) {
       setError('Please fill in all required fields');
+      setLoading(false);
       return;
     }
 
-    // Mock user creation
-    const userData = {
-      id: userType === 'teacher' ? `t${Date.now()}` : `s${Date.now()}`,
-      name: formData.name,
-      email: formData.email,
-      userType: userType,
-      verified: userType === 'student', // Students auto-verified, teachers need approval
-      ...(userType === 'teacher' && {
-        subjects: formData.subjects.split(',').map(s => s.trim()),
-        experience: formData.experience,
-        qualification: formData.qualification
-      })
-    };
+    try {
+      // Prepare signup data
+      const signupData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        user_type: userType,
+      };
 
-    login(userData);
-    
-    // Navigate based on user type
-    if (userType === 'teacher') {
-      navigate('/teacher/dashboard');
-    } else {
-      navigate('/student/dashboard');
+      // Add teacher-specific fields
+      if (userType === 'teacher') {
+        signupData.subjects = formData.subjects.split(',').map(s => s.trim());
+        signupData.experience = formData.experience;
+        signupData.qualification = formData.qualification || null;
+        signupData.hourly_rate = 500; // Default rate
+      }
+
+      // Call real API
+      const response = await authService.signup(signupData);
+
+      // Update auth context
+      login(response);
+      
+      // Navigate based on user type
+      if (userType === 'teacher') {
+        navigate('/teacher/dashboard');
+      } else {
+        navigate('/student/dashboard');
+      }
+    } catch (err) {
+      console.error('Signup error:', err);
+      setError(err.response?.data?.detail || 'Signup failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
