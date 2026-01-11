@@ -255,6 +255,50 @@ export const communityService = {
   },
 };
 
+// Profile Service
+export const profileService = {
+  updateProfilePicture: async (imageUrl) => {
+    const response = await apiClient.put('/profile/picture', { image_url: imageUrl });
+    return response.data;
+  },
+
+  updateTeacherRate: async (hourlyRate) => {
+    const response = await apiClient.put(`/profile/teacher/rate?hourly_rate=${hourlyRate}`);
+    return response.data;
+  },
+};
+
+// Ratings Service
+export const ratingsService = {
+  createRating: async (ratingData) => {
+    const response = await apiClient.post('/ratings', ratingData);
+    return response.data;
+  },
+
+  getTeacherRatings: async (teacherId) => {
+    const response = await apiClient.get(`/ratings/teacher/${teacherId}`);
+    return response.data;
+  },
+};
+
+// Analytics Service
+export const analyticsService = {
+  getTeacherAnalytics: async (teacherId) => {
+    const response = await apiClient.get(`/analytics/teacher/${teacherId}`);
+    return response.data;
+  },
+
+  getStudentAnalytics: async (studentId) => {
+    const response = await apiClient.get(`/analytics/student/${studentId}`);
+    return response.data;
+  },
+
+  getEarningsBreakdown: async (teacherId) => {
+    const response = await apiClient.get(`/analytics/earnings/${teacherId}`);
+    return response.data;
+  },
+};
+
 export default {
   auth: authService,
   teachers: teacherService,
@@ -265,4 +309,7 @@ export default {
   notes: notesService,
   assignments: assignmentsService,
   community: communityService,
+  profile: profileService,
+  ratings: ratingsService,
+  analytics: analyticsService,
 };
