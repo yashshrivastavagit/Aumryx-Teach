@@ -148,10 +148,121 @@ export const adminService = {
   },
 };
 
+// Attendance Service
+export const attendanceService = {
+  markAttendance: async (attendanceData) => {
+    const response = await apiClient.post('/attendance', attendanceData);
+    return response.data;
+  },
+
+  getClassAttendance: async (classId) => {
+    const response = await apiClient.get(`/attendance/class/${classId}`);
+    return response.data;
+  },
+
+  getStudentAttendance: async (studentId) => {
+    const response = await apiClient.get(`/attendance/student/${studentId}`);
+    return response.data;
+  },
+};
+
+// Notes Service
+export const notesService = {
+  createNote: async (noteData) => {
+    const response = await apiClient.post('/notes', noteData);
+    return response.data;
+  },
+
+  getTeacherNotes: async (teacherId) => {
+    const response = await apiClient.get(`/notes/teacher/${teacherId}`);
+    return response.data;
+  },
+
+  getClassNotes: async (classId) => {
+    const response = await apiClient.get(`/notes/class/${classId}`);
+    return response.data;
+  },
+
+  updateNote: async (noteId, noteData) => {
+    const response = await apiClient.put(`/notes/${noteId}`, noteData);
+    return response.data;
+  },
+
+  deleteNote: async (noteId) => {
+    const response = await apiClient.delete(`/notes/${noteId}`);
+    return response.data;
+  },
+};
+
+// Assignments Service
+export const assignmentsService = {
+  createAssignment: async (assignmentData) => {
+    const response = await apiClient.post('/assignments', assignmentData);
+    return response.data;
+  },
+
+  getClassAssignments: async (classId) => {
+    const response = await apiClient.get(`/assignments/class/${classId}`);
+    return response.data;
+  },
+
+  getTeacherAssignments: async (teacherId) => {
+    const response = await apiClient.get(`/assignments/teacher/${teacherId}`);
+    return response.data;
+  },
+
+  updateAssignment: async (assignmentId, assignmentData) => {
+    const response = await apiClient.put(`/assignments/${assignmentId}`, assignmentData);
+    return response.data;
+  },
+
+  deleteAssignment: async (assignmentId) => {
+    const response = await apiClient.delete(`/assignments/${assignmentId}`);
+    return response.data;
+  },
+};
+
+// Community Service
+export const communityService = {
+  createPost: async (postData) => {
+    const response = await apiClient.post('/community/posts', postData);
+    return response.data;
+  },
+
+  getTeacherPosts: async (teacherId) => {
+    const response = await apiClient.get(`/community/posts/teacher/${teacherId}`);
+    return response.data;
+  },
+
+  getClassPosts: async (classId) => {
+    const response = await apiClient.get(`/community/posts/class/${classId}`);
+    return response.data;
+  },
+
+  getAllPosts: async (limit = 50) => {
+    const response = await apiClient.get(`/community/posts?limit=${limit}`);
+    return response.data;
+  },
+
+  updatePost: async (postId, postData) => {
+    const response = await apiClient.put(`/community/posts/${postId}`, postData);
+    return response.data;
+  },
+
+  deletePost: async (postId) => {
+    const response = await apiClient.delete(`/community/posts/${postId}`);
+    return response.data;
+  },
+};
+
 export default {
   auth: authService,
   teachers: teacherService,
   classes: classService,
   enrollments: enrollmentService,
   admin: adminService,
+  attendance: attendanceService,
+  notes: notesService,
+  assignments: assignmentsService,
+  community: communityService,
 };
