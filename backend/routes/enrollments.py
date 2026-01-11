@@ -113,6 +113,8 @@ async def get_student_enrollments(
             detail="Invalid student ID"
         )
     
+    
+    db = await get_db()
     enrollments = []
     async for enrollment in db.enrollments.find({"student_id": student_id}):
         enrollment["_id"] = str(enrollment["_id"])
