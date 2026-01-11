@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { getCurrentUser, setCurrentUser as setMockUser, logout as mockLogout } from '../mockData';
+import { authService } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -17,21 +17,28 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check for stored user on mount
-    const storedUser = getCurrentUser();
-    if (storedUser) {
-      setUser(storedUser);
+    const storedUser = localStorage.getItem('aumryx_user');
+    const token = localStorage.getItem('auth_token');
+    
+    if (storedUser && token) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('aumryx_user');
+        localStorage.removeItem('auth_token');
+      }
     }
     setLoading(false);
   }, []);
 
   const login = (userData) => {
-    setUser(userData);
-    setMockUser(userData);
+    setUser(userData.user);
   };
 
   const logout = () => {
     setUser(null);
-    mockLogout();
+    authService.logout();
   };
 
   const value = {
@@ -40,8 +47,8 @@ export const AuthProvider = ({ children }) => {
     logout,
     loading,
     isAuthenticated: !!user,
-    isTeacher: user?.userType === 'teacher',
-    isStudent: user?.userType === 'student'
+    isTeacher: user?.user_type === 'teacher',
+    isStudent: user?.user_type === 'student'
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
