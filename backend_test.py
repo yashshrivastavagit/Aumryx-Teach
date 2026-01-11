@@ -400,8 +400,10 @@ def test_class_management():
         
     try:
         data = response.json()
-        class_id = data["id"]
+        # Handle both id and _id fields
+        class_id = data.get("id") or data.get("_id")
         success = (
+            class_id is not None and
             data["title"] == CLASS_DATA["title"] and
             data["teacher_id"] == teacher_id and
             data["status"] == "active"
