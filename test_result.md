@@ -142,15 +142,18 @@ backend:
   
   - task: "Enrollment System"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/routes/enrollments.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Enrollment endpoints created but not tested yet"
+      - working: true
+        agent: "testing"
+        comment: "All enrollment APIs tested successfully. Student enrollment, teacher/student enrollment views working. Authorization properly enforced."
   
   - task: "Admin Panel API"
     implemented: true
