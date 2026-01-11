@@ -1,19 +1,17 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from motor.motor_asyncio import AsyncIOMotorClient
 from typing import Optional
 from bson import ObjectId
-import os
 
 from utils.auth import decode_access_token
 from models.user import User, UserType
 
 security = HTTPBearer()
 
-# Database connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+async def get_db():
+    """Get database connection from server.py"""
+    from server import db
+    return db
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> User:
     """Get the current authenticated user."""
@@ -30,6 +28,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise credentials_exception
     
     # Get user from database
+    db = await get_db()
     user_dict = await db.users.find_one({"_id": ObjectId(token_data.user_id)})
     if user_dict is None:
         raise credentials_exception
