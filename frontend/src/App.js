@@ -15,6 +15,7 @@ import SignupPage from "./pages/SignupPage";
 import TeacherBrowsePage from "./pages/TeacherBrowsePage";
 import TeacherProfilePage from "./pages/TeacherProfilePage";
 import TeacherDashboard from "./pages/TeacherDashboard";
+import EnhancedTeacherDashboard from "./pages/EnhancedTeacherDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
 import AdminPanel from "./pages/AdminPanel";
 
