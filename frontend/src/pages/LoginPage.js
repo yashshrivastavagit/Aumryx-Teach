@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { authService } from '../services/api';
 import { Mail, Lock, User, AlertCircle } from 'lucide-react';
 
 const LoginPage = () => {
@@ -8,35 +9,44 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
-    // Mock login validation
+    // Validation
     if (!email || !password) {
       setError('Please fill in all fields');
+      setLoading(false);
       return;
     }
 
-    // Mock user data
-    const userData = {
-      id: userType === 'teacher' ? 't1' : 's1',
-      name: userType === 'teacher' ? 'Dr. Priya Sharma' : 'Riya Gupta',
-      email: email,
-      userType: userType,
-      verified: true
-    };
+    try {
+      // Call real API
+      const response = await authService.login({
+        email,
+        password,
+        user_type: userType
+      });
 
-    login(userData);
-    
-    // Navigate to respective dashboard
-    if (userType === 'teacher') {
-      navigate('/teacher/dashboard');
-    } else {
-      navigate('/student/dashboard');
+      // Update auth context
+      login(response);
+      
+      // Navigate to respective dashboard
+      if (userType === 'teacher') {
+        navigate('/teacher/dashboard');
+      } else {
+        navigate('/student/dashboard');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err.response?.data?.detail || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,6 +102,7 @@ const LoginPage = () => {
                   className="w-full pl-10 pr-4 py-3 rounded-full border transition-all"
                   style={{ borderColor: 'var(--border-light)' }}
                   placeholder="your@email.com"
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -109,12 +120,13 @@ const LoginPage = () => {
                   className="w-full pl-10 pr-4 py-3 rounded-full border transition-all"
                   style={{ borderColor: 'var(--border-light)' }}
                   placeholder="Enter your password"
+                  disabled={loading}
                 />
               </div>
             </div>
 
-            <button type="submit" className="btn-primary w-full">
-              Login as {userType === 'teacher' ? 'Teacher' : 'Student'}
+            <button type="submit" className="btn-primary w-full" disabled={loading}>
+              {loading ? 'Logging in...' : `Login as ${userType === 'teacher' ? 'Teacher' : 'Student'}`}
             </button>
           </form>
 
