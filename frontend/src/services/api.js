@@ -125,9 +125,33 @@ export const enrollmentService = {
   },
 };
 
+// Admin Service
+export const adminService = {
+  getPendingTeachers: async () => {
+    const response = await apiClient.get('/admin/teachers/pending');
+    return response.data;
+  },
+
+  getAllTeachers: async () => {
+    const response = await apiClient.get('/admin/teachers/all');
+    return response.data;
+  },
+
+  verifyTeacher: async (teacherId) => {
+    const response = await apiClient.patch(`/admin/teachers/${teacherId}/verify`);
+    return response.data;
+  },
+
+  unverifyTeacher: async (teacherId) => {
+    const response = await apiClient.patch(`/admin/teachers/${teacherId}/unverify`);
+    return response.data;
+  },
+};
+
 export default {
   auth: authService,
   teachers: teacherService,
   classes: classService,
   enrollments: enrollmentService,
+  admin: adminService,
 };
