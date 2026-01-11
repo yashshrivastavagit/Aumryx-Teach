@@ -2,30 +2,31 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from bson import ObjectId
 from typing import List
 from datetime import datetime
+import os
 
 from models.user import User
+from dependencies import get_current_user
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
+
+# Founder email from environment
+FOUNDER_EMAIL = os.environ.get("FOUNDER_EMAIL", "aumryx@gmail.com")
 
 async def get_db():
     from server import db
     return db
 
-async def verify_admin_token(token: str = None):
-    """Simple admin verification for MVP - checks for admin token."""
-    from dependencies import get_current_user
-    from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-    
-    # This is a simplified check - in production, use proper JWT validation
-    if not token:
+async def verify_founder_access(current_user: User = Depends(get_current_user)):
+    """Verify that the current user is the founder."""
+    if current_user.email != FOUNDER_EMAIL:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Admin authentication required"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied. Only the founder can access admin features."
         )
-    return True
+    return current_user
 
 @router.get("/teachers/pending", response_model=List[User])
-async def get_pending_teachers():
+async def get_pending_teachers(founder: User = Depends(verify_founder_access)):
     """Get all unverified teachers."""
     
     db = await get_db()
