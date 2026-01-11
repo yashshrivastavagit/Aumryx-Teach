@@ -40,7 +40,7 @@ async def get_pending_teachers(founder: User = Depends(verify_founder_access)):
     return teachers
 
 @router.get("/teachers/all", response_model=List[User])
-async def get_all_teachers():
+async def get_all_teachers(founder: User = Depends(verify_founder_access)):
     """Get all teachers regardless of verification status."""
     
     db = await get_db()
@@ -53,7 +53,7 @@ async def get_all_teachers():
     return teachers
 
 @router.patch("/teachers/{teacher_id}/verify")
-async def verify_teacher(teacher_id: str):
+async def verify_teacher(teacher_id: str, founder: User = Depends(verify_founder_access)):
     """Verify a teacher."""
     
     db = await get_db()
@@ -96,7 +96,7 @@ async def verify_teacher(teacher_id: str):
     return {"message": "Teacher verified successfully", "teacher_id": teacher_id}
 
 @router.patch("/teachers/{teacher_id}/unverify")
-async def unverify_teacher(teacher_id: str):
+async def unverify_teacher(teacher_id: str, founder: User = Depends(verify_founder_access)):
     """Unverify a teacher."""
     
     db = await get_db()
