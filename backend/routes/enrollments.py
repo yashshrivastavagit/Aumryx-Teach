@@ -142,6 +142,8 @@ async def get_teacher_enrollments(
             detail="Invalid teacher ID"
         )
     
+    
+    db = await get_db()
     enrollments = []
     async for enrollment in db.enrollments.find({"teacher_id": teacher_id}):
         enrollment["_id"] = str(enrollment["_id"])
