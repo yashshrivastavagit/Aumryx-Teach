@@ -135,10 +135,12 @@ def test_teacher_signup():
     try:
         data = response.json()
         teacher_token = data["access_token"]
-        teacher_id = data["user"]["id"]
+        # Handle both id and _id fields
+        teacher_id = data["user"].get("id") or data["user"].get("_id")
         
         success = (
             teacher_token is not None and
+            teacher_id is not None and
             data["user"]["name"] == TEACHER_DATA["name"] and
             data["user"]["email"] == TEACHER_DATA["email"] and
             data["user"]["user_type"] == "teacher" and
