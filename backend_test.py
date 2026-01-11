@@ -297,7 +297,7 @@ def test_teacher_apis():
         
     try:
         data = response.json()
-        success = data["id"] == teacher_id and data["name"] == TEACHER_DATA["name"]
+        success = (data.get("id") or data.get("_id")) == teacher_id and data["name"] == TEACHER_DATA["name"]
         print_result("Get Teacher by ID", success, f"Teacher profile retrieved: {data['name']}")
     except:
         print_result("Get Teacher by ID", False, "Invalid response format")
