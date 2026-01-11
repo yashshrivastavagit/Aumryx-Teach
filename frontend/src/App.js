@@ -77,6 +77,9 @@ function AppContent() {
           }
         />
 
+        {/* Admin Panel - No auth for MVP */}
+        <Route path="/admin" element={<AdminPanel />} />
+
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
