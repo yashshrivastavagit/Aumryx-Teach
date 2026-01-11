@@ -1,23 +1,18 @@
 from fastapi import APIRouter, HTTPException, status, Depends
-from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from datetime import datetime
-import os
 
 from models.user import UserCreate, UserLogin, User, Token, UserType
 from utils.auth import verify_password, get_password_hash, create_access_token
-from dependencies import get_current_user
+from dependencies import get_current_user, get_db
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
-
-# Database connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
 
 @router.post("/signup", response_model=Token, status_code=status.HTTP_201_CREATED)
 async def signup(user_data: UserCreate):
     """Register a new user (teacher or student)."""
+    
+    db = await get_db()
     
     # Check if user already exists
     existing_user = await db.users.find_one({"email": user_data.email})
@@ -62,6 +57,8 @@ async def signup(user_data: UserCreate):
 @router.post("/login", response_model=Token)
 async def login(credentials: UserLogin):
     """Login user and return JWT token."""
+    
+    db = await get_db()
     
     # Find user
     user = await db.users.find_one({"email": credentials.email})
