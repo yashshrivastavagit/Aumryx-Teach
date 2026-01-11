@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 # Import routes
-from routes import auth, teachers, classes, enrollments, admin
+from routes import auth, teachers, classes, enrollments, admin, attendance, notes, assignments, community
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
