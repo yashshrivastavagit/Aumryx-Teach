@@ -1,18 +1,16 @@
 from fastapi import APIRouter, HTTPException, status, Depends, Query
-from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from typing import List, Optional
 from datetime import datetime
 
 from models.user import User, UserUpdate
-from dependencies import get_db, get_current_user, get_current_teacher
+from dependencies import get_current_user, get_current_teacher
 
 router = APIRouter(prefix="/teachers", tags=["Teachers"])
 
-# Database connection
-# Database imported from dependencies
-
-
+async def get_db():
+    from server import db
+    return db
 
 @router.get("", response_model=List[User])
 async def get_teachers(
@@ -21,6 +19,8 @@ async def get_teachers(
     verified_only: bool = Query(True, description="Show only verified teachers")
 ):
     """Get all teachers with optional search and filters."""
+    
+    db = await get_db()
     
     # Build query
     query = {"user_type": "teacher"}
@@ -49,6 +49,8 @@ async def get_teachers(
 async def get_teacher(teacher_id: str):
     """Get a single teacher by ID."""
     
+    db = await get_db()
+    
     if not ObjectId.is_valid(teacher_id):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -76,6 +78,8 @@ async def update_teacher(
     current_user: User = Depends(get_current_teacher)
 ):
     """Update teacher profile (only the teacher themselves)."""
+    
+    db = await get_db()
     
     # Verify the teacher is updating their own profile
     if current_user.id != teacher_id:
