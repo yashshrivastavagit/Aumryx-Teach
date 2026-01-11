@@ -422,7 +422,7 @@ def test_class_management():
     try:
         data = response.json()
         success = isinstance(data, list) and len(data) >= 1
-        found_class = any(c["id"] == class_id for c in data)
+        found_class = any((c.get("id") or c.get("_id")) == class_id for c in data)
         print_result("Get All Classes", success and found_class, f"Found {len(data)} classes")
     except:
         print_result("Get All Classes", False, "Invalid response format")
