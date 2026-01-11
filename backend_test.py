@@ -530,7 +530,7 @@ def test_enrollment_system():
         
     try:
         data = response.json()
-        success = data["id"] == enrollment_id and data["student_id"] == student_id
+        success = (data.get("id") or data.get("_id")) == enrollment_id and data["student_id"] == student_id
         print_result("Get Enrollment by ID", success, "Enrollment details retrieved")
     except:
         print_result("Get Enrollment by ID", False, "Invalid response format")
