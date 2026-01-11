@@ -87,6 +87,8 @@ async def get_class(class_id: str):
             detail="Invalid class ID"
         )
     
+    db = await get_db()
+    
     class_doc = await db.classes.find_one({"_id": ObjectId(class_id)})
     
     if not class_doc:
