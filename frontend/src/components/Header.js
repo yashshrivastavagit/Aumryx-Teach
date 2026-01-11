@@ -68,11 +68,14 @@ const Header = () => {
             <Link to="/teachers" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
               Find Teachers
             </Link>
+            <Link to="/admin" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
+              Admin
+            </Link>
             
             {isAuthenticated ? (
               <>
                 <Link 
-                  to={user?.userType === 'teacher' ? '/teacher/dashboard' : '/student/dashboard'} 
+                  to={user?.user_type === 'teacher' ? '/teacher/dashboard' : '/student/dashboard'} 
                   className="nav-link"
                   onClick={() => setMobileMenuOpen(false)}
                 >
