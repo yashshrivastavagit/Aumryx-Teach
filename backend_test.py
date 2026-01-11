@@ -501,7 +501,7 @@ def test_enrollment_system():
     try:
         data = response.json()
         success = isinstance(data, list) and len(data) >= 1
-        found_enrollment = any(e["id"] == enrollment_id for e in data)
+        found_enrollment = any((e.get("id") or e.get("_id")) == enrollment_id for e in data)
         print_result("Get Student Enrollments", success and found_enrollment, f"Found {len(data)} enrollments")
     except:
         print_result("Get Student Enrollments", False, "Invalid response format")
